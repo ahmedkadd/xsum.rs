@@ -288,23 +288,25 @@ impl Xsum for XsumSmall {
             if (ivalue & 3) == 3 {
                 // extra bits are 11
                 should_round_away_from_zero = true;
-            }
-
-            if lower == 0 {
-                // see if any lower bits are non-zero
-                while j > 0 {
-                    j -= 1;
-                    if self.m_sacc.m_chunk[j as usize] != 0 {
-                        lower = 1;
-                        break;
+            } else if (ivalue & 3) >= 2 && (ivalue & 4) != 0 {
+                // extra bits are 10, low bit is 1 (odd) — check lower bits
+                if lower == 0 {
+                    // see if any lower bits are non-zero
+                    while j > 0 {
+                        j -= 1;
+                        if self.m_sacc.m_chunk[j as usize] != 0 {
+                            lower = 1;
+                            break;
+                        }
                     }
                 }
+                if lower == 0 {
+                    // low bit 1 (odd), extra bits are 10, lower bits all zero
+                    should_round_away_from_zero = true;
+                }
             }
-
-            if lower == 0 {
-                // low bit 1 (odd), extra bits are 10, lower bits are all 0
-                should_round_away_from_zero = true;
-            }
+            // extra bits 00 or 01: no rounding needed
+            // extra bits 10 with even low bit: no rounding needed (round to even)
         }
 
         if should_round_away_from_zero {

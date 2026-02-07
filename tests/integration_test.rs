@@ -187,6 +187,8 @@ fn complex() {
         -1.797_693_134_862_315_7e308,
     );
     same_value(&[8.98846567431158e+307, 8.98846567431158e+307], INFINITY);
+    same_value(&[f64::MIN], f64::MIN);
+    same_value(&[f64::MIN, 0.0], f64::MIN);
 }
 
 #[test]
