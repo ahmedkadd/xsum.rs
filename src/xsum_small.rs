@@ -288,8 +288,17 @@ impl Xsum for XsumSmall {
             if (ivalue & 3) == 3 {
                 // extra bits are 11
                 should_round_away_from_zero = true;
-            } else if (ivalue & 3) >= 2 && (ivalue & 4) != 0 {
-                // extra bits are 10, low bit is 1 (odd) — check lower bits
+            } else if (ivalue & 3) <= 1 {
+                // extra bits are 00 or 01
+                // TODO: this is not required,
+                // but removing the branch would change the logic
+                should_round_away_from_zero = false;
+            } else if (ivalue & 4) == 0 {
+                // low bit is 0 (even), extra bits are 10
+                // TODO: this is not required,
+                // but removing the branch would change the logic
+                should_round_away_from_zero = false;
+            } else {
                 if lower == 0 {
                     // see if any lower bits are non-zero
                     while j > 0 {
@@ -301,12 +310,10 @@ impl Xsum for XsumSmall {
                     }
                 }
                 if lower == 0 {
-                    // low bit 1 (odd), extra bits are 10, lower bits all zero
+                    // low bit 1 (odd), extra bits are 10, lower bits are all 0
                     should_round_away_from_zero = true;
                 }
             }
-            // extra bits 00 or 01: no rounding needed
-            // extra bits 10 with even low bit: no rounding needed (round to even)
         }
 
         if should_round_away_from_zero {

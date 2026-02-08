@@ -188,7 +188,13 @@ fn complex() {
     );
     same_value(&[8.98846567431158e+307, 8.98846567431158e+307], INFINITY);
     same_value(&[f64::MIN], f64::MIN);
+    same_value(&[-f64::MIN], -f64::MIN);
     same_value(&[f64::MIN, 0.0], f64::MIN);
+    same_value(&[f64::MIN, -0.0], f64::MIN);
+    same_value(&[f64::MAX], f64::MAX);
+    same_value(&[-f64::MAX, 0.0], -f64::MAX);
+    same_value(&[f64::MAX, 0.0], f64::MAX);
+    same_value(&[f64::MAX, -0.0], f64::MAX);
 }
 
 #[test]
@@ -205,6 +211,14 @@ fn nan_infinity() {
     same_value(&[INFINITY, INFINITY], INFINITY);
     same_value(&[-INFINITY], -INFINITY);
     same_value(&[-INFINITY, -INFINITY], -INFINITY);
+
+    same_value(&[f64::MIN, INFINITY], INFINITY);
+    same_value(&[f64::MIN, -INFINITY], -INFINITY);
+    same_value(&[f64::MIN, NaN], NaN);
+
+    same_value(&[f64::MAX, INFINITY], INFINITY);
+    same_value(&[f64::MAX, -INFINITY], -INFINITY);
+    same_value(&[f64::MAX, NaN], NaN);
 }
 
 #[test]
